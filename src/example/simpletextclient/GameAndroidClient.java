@@ -9,7 +9,9 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -17,11 +19,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class TextClient extends Activity {
+public class GameAndroidClient extends Activity {
 	private Socket socket;
 	private static final int SERVERPORT = 8901;
 	//private static final String SERVER_IP = "10.0.2.2";
-	private static final String SERVER_IP = "192.168.1.5";
+	private static final String SERVER_IP = "192.168.1.31";
 	
 	String textResult = "";
 	EditText textOut;
@@ -42,6 +44,7 @@ public class TextClient extends Activity {
 		textIn = (TextView)findViewById(R.id.textin);
 
 		Button button = (Button)findViewById(R.id.send);
+	//	Button buttonNewGame = (Button)findViewById(R.id.newGame);
 		new Thread(new ClientThread()).start();
 
 		// Button press event listener
@@ -56,6 +59,19 @@ public class TextClient extends Activity {
 			}
 
 		});
+		// Button press event listener
+	/*			buttonNewGame.setOnClickListener(new View.OnClickListener() {
+
+					public void onClick(View view) {
+
+						//	new Thread(new ClientThread()).start();
+						out.println("quit");
+						Intent intent = getIntent();
+					    finish();
+					    startActivity(intent);
+					}
+
+				});*/
 	}
 
 
@@ -68,7 +84,7 @@ public class TextClient extends Activity {
 			}else if (message.equals("breaker")){
 				prefix = "BreakerInput";
 			}
-			if( (prefix != null) && !message.equals("maker") && !message.equals("breaker") ){
+			if( (prefix != null) && !message.equals("maker") && !message.equals("breaker") && (!message.equals("quit"))){
 				message = prefix + message;
 			}
 
@@ -127,6 +143,7 @@ public class TextClient extends Activity {
 			}
 		}
 	}
+	
 	class updateUIThread implements Runnable {
 
 		private String msg;
@@ -144,6 +161,7 @@ public class TextClient extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		try {
+			out.println("quit");
 			in.close();
 			out.close();
 			socket.close();
@@ -153,7 +171,5 @@ public class TextClient extends Activity {
 		}
 		socket = null;
 	}
-
-
 }
 
